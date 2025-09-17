@@ -1,0 +1,317 @@
+# Copyright (C) 2025 Arraytics
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Timetics PDF Addon 1.0.0\n"
+"Report-Msgid-Bugs-To: https://arraytics.com/support\n"
+"POT-Creation-Date: 2025-01-01 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: timetics-pdf-addon.php:123
+msgid "Timetics PDF Addon requires %s to be installed and activated."
+msgstr ""
+
+#: includes/core/class-hooks.php:89
+msgid "Booking Confirmation"
+msgstr ""
+
+#: includes/core/class-hooks.php:90
+msgid "Thank you for your booking!"
+msgstr ""
+
+#: includes/core/class-hooks.php:91
+msgid "Booking Confirmation PDF:"
+msgstr ""
+
+#: includes/core/class-hooks.php:92
+msgid "Download PDF Confirmation"
+msgstr ""
+
+#: includes/admin/class-menu.php:45
+msgid "PDF Settings"
+msgstr ""
+
+#: includes/admin/class-menu.php:95
+msgid "Security check failed."
+msgstr ""
+
+#: includes/admin/class-menu.php:99
+msgid "Invalid booking ID."
+msgstr ""
+
+#: includes/admin/class-menu.php:108
+msgid "PDF not found."
+msgstr ""
+
+#: includes/admin/class-menu.php:130
+msgid "Enable PDF Generation"
+msgstr ""
+
+#: includes/admin/class-menu.php:133
+msgid "Enable automatic PDF generation for booking confirmations."
+msgstr ""
+
+#: includes/admin/class-menu.php:140
+msgid "PDF Storage"
+msgstr ""
+
+#: includes/admin/class-menu.php:143
+msgid "Temporary (delete after email)"
+msgstr ""
+
+#: includes/admin/class-menu.php:145
+msgid "Permanent (keep files)"
+msgstr ""
+
+#: includes/admin/class-menu.php:148
+msgid "Choose how to store generated PDF files."
+msgstr ""
+
+#: includes/admin/class-menu.php:155
+msgid "Company Logo"
+msgstr ""
+
+#: includes/admin/class-menu.php:162
+msgid "Upload Logo"
+msgstr ""
+
+#: includes/admin/class-menu.php:164
+msgid "Remove Logo"
+msgstr ""
+
+#: includes/admin/class-menu.php:167
+msgid "Upload your company logo to include in PDF confirmations."
+msgstr ""
+
+#: includes/admin/class-menu.php:174
+msgid "Header Text"
+msgstr ""
+
+#: includes/admin/class-menu.php:177
+msgid "Main header text for the PDF confirmation."
+msgstr ""
+
+#: includes/admin/class-menu.php:184
+msgid "Footer Text"
+msgstr ""
+
+#: includes/admin/class-menu.php:187
+msgid "Footer text for the PDF confirmation."
+msgstr ""
+
+#: includes/admin/class-menu.php:194
+msgid "Primary Color"
+msgstr ""
+
+#: includes/admin/class-menu.php:197
+msgid "Primary color for PDF styling."
+msgstr ""
+
+#: includes/admin/class-menu.php:204
+msgid "Secondary Color"
+msgstr ""
+
+#: includes/admin/class-menu.php:207
+msgid "Secondary color for PDF styling."
+msgstr ""
+
+#: includes/admin/class-menu.php:214
+msgid "PDF Template"
+msgstr ""
+
+#: includes/admin/class-menu.php:217
+msgid "Default Template"
+msgstr ""
+
+#: includes/admin/class-menu.php:219
+msgid "Minimal Template"
+msgstr ""
+
+#: includes/admin/class-menu.php:221
+msgid "Professional Template"
+msgstr ""
+
+#: includes/admin/class-menu.php:224
+msgid "Choose the PDF template style."
+msgstr ""
+
+#: includes/admin/class-menu.php:235
+msgid "Settings updated successfully!"
+msgstr ""
+
+#: includes/admin/class-menu.php:245
+msgid "PDF Preview"
+msgstr ""
+
+#: includes/admin/class-menu.php:246
+msgid "Preview of how your PDF confirmation will look:"
+msgstr ""
+
+#: includes/admin/class-settings.php:45
+msgid "General Settings"
+msgstr ""
+
+#: includes/admin/class-settings.php:52
+msgid "Enable automatic PDF generation for booking confirmations"
+msgstr ""
+
+#: includes/admin/class-settings.php:55
+msgid "When enabled, PDF confirmations will be automatically generated and attached to customer emails."
+msgstr ""
+
+#: includes/admin/class-settings.php:62
+msgid "Choose how to store generated PDF files. Temporary storage saves disk space but permanent storage allows for later access."
+msgstr ""
+
+#: includes/admin/class-settings.php:69
+msgid "PDF Customization"
+msgstr ""
+
+#: includes/admin/class-settings.php:76
+msgid "Upload your company logo to include in PDF confirmations. Recommended size: 200x100 pixels."
+msgstr ""
+
+#: includes/admin/class-settings.php:83
+msgid "Main header text for the PDF confirmation."
+msgstr ""
+
+#: includes/admin/class-settings.php:90
+msgid "Footer text for the PDF confirmation."
+msgstr ""
+
+#: includes/admin/class-settings.php:97
+msgid "Primary color for PDF styling (headers, titles)."
+msgstr ""
+
+#: includes/admin/class-settings.php:104
+msgid "Secondary color for PDF styling (section headers)."
+msgstr ""
+
+#: includes/admin/class-settings.php:111
+msgid "Choose the PDF template style. Different templates have different layouts and styling."
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:89
+msgid "Booking Details"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:90
+msgid "Booking ID:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:91
+msgid "Booking Date:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:92
+msgid "Time:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:93
+msgid "Duration:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:94
+msgid "Timezone:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:100
+msgid "Customer Information"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:101
+msgid "Name:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:102
+msgid "Email:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:103
+msgid "Phone:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:110
+msgid "Meeting Information"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:111
+msgid "Meeting:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:112
+msgid "Host:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:113
+msgid "Host Email:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:114
+msgid "Location:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:115
+msgid "Description:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:125
+msgid "Payment Information"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:126
+msgid "Total Amount:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:127
+msgid "Payment Status:"
+msgstr ""
+
+#: includes/core/class-pdf-generator.php:128
+msgid "Payment Method:"
+msgstr ""
+
+#: includes/core/class-email-handler.php:89
+msgid "A PDF confirmation has been attached to this email."
+msgstr ""
+
+#: includes/utils/class-helper.php:89
+msgid "Completed"
+msgstr ""
+
+#: includes/utils/class-helper.php:90
+msgid "Pending"
+msgstr ""
+
+#: includes/utils/class-helper.php:91
+msgid "Cancelled"
+msgstr ""
+
+#: includes/utils/class-helper.php:92
+msgid "Rescheduled"
+msgstr ""
+
+#: includes/utils/class-helper.php:100
+msgid "Paid"
+msgstr ""
+
+#: includes/utils/class-helper.php:101
+msgid "Failed"
+msgstr ""
+
+#: includes/utils/class-helper.php:102
+msgid "Refunded"
+msgstr ""
+
+#: includes/utils/class-helper.php:150
+msgid "Timetics PDF Addon"
+msgstr ""
+
+#: includes/utils/class-helper.php:155
+msgid "Generate and attach booking confirmation PDFs to Timetics customer emails."
+msgstr ""
