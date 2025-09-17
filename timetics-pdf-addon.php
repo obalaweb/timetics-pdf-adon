@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.4.11
+ * Version: 2.5.0
  * 
  * Changelog:
+ * v2.5.0 - Clean working version based on v2.4.4; guaranteed email sending with medical info extraction
  * v2.4.11 - Simplified approach based on working v2.4.4; removed complex enforcement; kept essential medical lookup
  * v2.4.10 - Added error handling to prevent email blocking; wrapped enforcement logic in try-catch
  * v2.4.9 - Direct DB-first medical info retrieval; REST endpoint for admin access; email-scoped
@@ -47,7 +48,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.4.11';
+    const VERSION = '2.5.0';
 
     /**
      * Singleton instance.
@@ -922,14 +923,6 @@ class Timetics_Pdf_Addon
     private function parse_email_data($subject, $message, $booking_id = null)
     {
         try {
-            // CACHE INITIAL EMAIL DATA
-            $this->cache_production_debug_data('EMAIL_INPUT', [
-                'subject' => $subject,
-                'message' => $message,
-                'provided_booking_id' => $booking_id,
-                'message_length' => strlen($message),
-                'subject_length' => strlen($subject)
-            ]);
             
             // PRIMARY APPROACH: Try to get booking ID from multiple sources
             if (!$booking_id) {
@@ -940,47 +933,23 @@ class Timetics_Pdf_Addon
                 $booking_id = $this->get_stored_booking_id($email_data);
                 $this->log_info('DEBUG: Stored booking ID result: ' . ($booking_id ? $booking_id : 'NOT FOUND'));
                 
-                // CACHE STORED BOOKING ID RESULT
-                $this->cache_production_debug_data('STORED_BOOKING_ID', [
-                    'email_data' => $email_data,
-                    'result' => $booking_id,
-                    'method' => 'get_stored_booking_id'
-                ]);
                 
                 // If not found in cache, try to extract from email content
                 if (!$booking_id) {
             $booking_id = $this->extract_booking_id_from_email($subject, $message);
                     $this->log_info('DEBUG: Extracted booking ID from email: ' . ($booking_id ? $booking_id : 'NOT FOUND'));
                     
-                    // CACHE EXTRACTED BOOKING ID RESULT
-                    $this->cache_production_debug_data('EXTRACTED_BOOKING_ID', [
-                        'subject' => $subject,
-                        'message' => $message,
-                        'result' => $booking_id,
-                        'method' => 'extract_booking_id_from_email'
-                    ]);
                 }
 
             } else {
                 $this->log_info('DEBUG: Booking ID provided directly: ' . $booking_id);
                 
-                // CACHE PROVIDED BOOKING ID
-                $this->cache_production_debug_data('PROVIDED_BOOKING_ID', [
-                    'booking_id' => $booking_id,
-                    'method' => 'direct_provided'
-                ]);
             }
             
             if ($booking_id && is_numeric($booking_id)) {
                 $this->log_info('DEBUG: Using booking ID for Timetics data extraction: ' . $booking_id);
                 $timetics_data = $this->get_data_from_timetics_objects($booking_id);
                 
-                // CACHE TIMETICS DATA EXTRACTION RESULT
-                $this->cache_production_debug_data('TIMETICS_DATA_EXTRACTION', [
-                    'booking_id' => $booking_id,
-                    'timetics_data' => $timetics_data,
-                    'success' => !empty($timetics_data)
-                ]);
                 
                 if ($timetics_data) {
                     $this->log_info('Successfully extracted data from Timetics objects for booking: ' . $booking_id);
@@ -1059,9 +1028,6 @@ class Timetics_Pdf_Addon
                 $customer_email = strtolower($em[0]);
             }
 
-            $this->cache_production_debug_data('EMAIL_ONLY_ENRICH_START', [
-                'customer_email' => $customer_email,
-            ]);
 
             if (empty($customer_email)) {
                 return;
@@ -1100,16 +1066,8 @@ class Timetics_Pdf_Addon
                     }
                     // Persist as last-known for this email
                     $this->update_last_known_medical_info_by_email($customer_email, $email_medical);
-                    $this->cache_production_debug_data('EMAIL_ONLY_MEDICAL_ENRICH', [
-                        'booking_id' => $booking_id,
-                        'email' => $customer_email,
-                        'medical' => $email_medical,
-                    ]);
                 }
             } else {
-                $this->cache_production_debug_data('EMAIL_ONLY_ENRICH_NO_MATCH', [
-                    'email' => $customer_email,
-                ]);
             }
         } catch (\Exception $e) {
             $this->log_error('Email-only medical enrichment failed: ' . $e->getMessage());
