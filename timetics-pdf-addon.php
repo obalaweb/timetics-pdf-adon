@@ -2045,7 +2045,8 @@ class Timetics_Pdf_Addon
             <tr>
                 <td>
                     ' . esc_html($data['service_code']) . '<br>
-                    ' . esc_html($data['icd_code']) . '
+                    ' . esc_html($data['icd_code']) . '<br>
+                    <strong>' . esc_html($data['service_name']) . '</strong>
                 </td>
                 <td>' . esc_html($data['service_description']) . '</td>
                 <td class="text-center">1.00</td>

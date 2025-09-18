@@ -281,7 +281,7 @@ class CliPdfTest {
         </thead>
         <tbody>
             <tr>
-                <td>' . esc_html($data['service_code'] ?? 'Code 0190') . '<br>' . esc_html($data['icd_code'] ?? 'Z00.0') . '</td>
+                <td>' . esc_html($data['service_code'] ?? 'Code 0190') . '<br>' . esc_html($data['icd_code'] ?? 'Z00.0') . '<br><strong>' . esc_html($data['service_name'] ?? 'Longevity Consultation') . '</strong></td>
                 <td>' . esc_html($data['service_description'] ?? 'Test Service') . '</td>
                 <td class="text-center">1.00</td>
                 <td class="text-right">' . number_format($data['unit_price'] ?? 960.00, 2) . '</td>
