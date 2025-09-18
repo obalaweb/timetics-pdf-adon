@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.7.3
+ * Version: 2.7.4
  * 
  * Changelog:
+ * v2.7.4 - CRITICAL FIX: Restored missing practitioner number and updated email detection patterns for PDF attachment
  * v2.7.3 - Minor formatting improvements: Removed CSS classes from PDF table cells for better PDF rendering
  * v2.7.2 - UI improvements: Added service name display in PDF items and removed company registration from address
  * v2.7.1 - Bug fixes: Fixed Staff::get_name() fatal error and updated branding to Dr Ben
@@ -76,7 +77,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.7.3';
+    const VERSION = '2.7.4';
 
     /**
      * Singleton instance.
