@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.8
+ * Version: 2.6.9
  * 
  * Changelog:
+ * v2.6.9 - CRITICAL FIX: Fixed fatal error - get_total_price() method doesn't exist, changed to get_total() method
  * v2.6.8 - CRITICAL FIX: Fixed Appointment and Booking method calls - get_title() -> get_name(), use Booking for dates/location
  * v2.6.7 - CRITICAL FIX: Fixed Customer::get_name() method call - added method_exists checks for different customer name methods
  * v2.6.6 - CRITICAL FIX: Fixed post_status from 'publish' to 'completed' - bookings have status 'completed' not 'publish'
@@ -3371,7 +3372,7 @@ Thank you for your business!'
             }
 
             // Pricing data - try to get from booking or use defaults
-            $booking_price = $booking->get_total_price();
+            $booking_price = $booking->get_total();
             if ($booking_price && $booking_price > 0) {
                 $data['unit_price'] = floatval($booking_price);
                 $data['total_amount'] = floatval($booking_price);
