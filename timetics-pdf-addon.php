@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.6
+ * Version: 2.5.7
  * 
  * Changelog:
+ * v2.5.7 - DEBUG: Added error logging to get_email_signature to identify why medical info extraction isn't working
  * v2.5.6 - FEATURE: Added GitHub updater functionality for automatic plugin updates from WordPress admin
  * v2.5.5 - CRITICAL FIX: Removed call to non-existent init_github_updater() method that was causing fatal error
  * v2.5.4 - COMPREHENSIVE DEBUG: Added detailed logging throughout entire medical info extraction pipeline to identify root cause
@@ -54,7 +55,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.6';
+    const VERSION = '2.5.7';
 
     /**
      * Singleton instance.
@@ -564,6 +565,8 @@ class Timetics_Pdf_Addon
         $subject = $args['subject'] ?? '';
         $message = $args['message'] ?? '';
 
+        $this->log_info('DEBUG: get_email_signature called with subject: ' . substr($subject, 0, 50) . '...');
+
         try {
             $data = $this->parse_email_data($subject, $message);
             // Build a compact canonical string from key invoice fields
@@ -596,6 +599,10 @@ class Timetics_Pdf_Addon
             $canonical = strtolower(implode('|', array_values($parts)));
             return sha1($canonical);
         } catch (Exception $e) {
+            // Log the error so we can see what's happening
+            $this->log_error('ERROR in get_email_signature: ' . $e->getMessage());
+            $this->log_error('ERROR trace: ' . $e->getTraceAsString());
+            
             // Fallback to normalized subject+message
             $subjectSafe = $this->sanitize_text($subject);
             $messageSafe = $this->sanitize_html($message);
