@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.3
+ * Version: 2.5.4
  * 
  * Changelog:
+ * v2.5.4 - COMPREHENSIVE DEBUG: Added detailed logging throughout entire medical info extraction pipeline to identify root cause
  * v2.5.3 - DEBUG: Added comprehensive debugging for medical info extraction to identify why medical data is not being populated
  * v2.5.2 - CRITICAL FIX: Removed non-existent ContextAwareExtractor::enhance() method call
  * v2.5.1 - CRITICAL FIX: Fixed StructuredEmailParser method call from parse() to parseEmail()
@@ -51,7 +52,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.3';
+    const VERSION = '2.5.4';
 
     /**
      * Singleton instance.
@@ -926,6 +927,11 @@ class Timetics_Pdf_Addon
      */
     private function parse_email_data($subject, $message, $booking_id = null)
     {
+        $this->log_info('=== MEDICAL INFO EXTRACTION DEBUG START ===');
+        $this->log_info('Input - Subject: ' . substr($subject, 0, 100) . '...');
+        $this->log_info('Input - Message length: ' . strlen($message) . ' characters');
+        $this->log_info('Input - Booking ID: ' . ($booking_id ? $booking_id : 'NULL'));
+        
         try {
             
             // PRIMARY APPROACH: Try to get booking ID from multiple sources
@@ -951,22 +957,38 @@ class Timetics_Pdf_Addon
             }
             
             if ($booking_id && is_numeric($booking_id)) {
-                $this->log_info('DEBUG: Using booking ID for Timetics data extraction: ' . $booking_id);
+                $this->log_info('MEDICAL_DEBUG: Using booking ID for Timetics data extraction: ' . $booking_id);
                 $timetics_data = $this->get_data_from_timetics_objects($booking_id);
                 
                 
                 if ($timetics_data) {
-                    $this->log_info('Successfully extracted data from Timetics objects for booking: ' . $booking_id);
+                    $this->log_info('MEDICAL_DEBUG: Successfully extracted data from Timetics objects for booking: ' . $booking_id);
+                    $this->log_info('MEDICAL_DEBUG: Timetics data medical info: ' . json_encode([
+                        'medical_aid_scheme' => $timetics_data['medical_aid_scheme'] ?? 'NOT SET',
+                        'medical_aid_number' => $timetics_data['medical_aid_number'] ?? 'NOT SET',
+                        'id_number' => $timetics_data['id_number'] ?? 'NOT SET'
+                    ]));
                     return $timetics_data;
+                } else {
+                    $this->log_info('MEDICAL_DEBUG: Failed to extract data from Timetics objects for booking: ' . $booking_id);
                 }
+            } else {
+                $this->log_info('MEDICAL_DEBUG: No valid booking ID available for Timetics data extraction');
             }
 
             // FALLBACK APPROACH: Use email parsing if Timetics objects fail
-            $this->log_info('Falling back to email parsing method');
+            $this->log_info('MEDICAL_DEBUG: Falling back to email parsing method');
             
             // Use the new structured email parser
             $parser = new StructuredEmailParser();
             $data = $parser->parseEmail($subject, $message);
+            
+            $this->log_info('MEDICAL_DEBUG: Email parser extracted data: ' . json_encode([
+                'customer_email' => $data['customer_email'] ?? 'NOT SET',
+                'medical_aid_scheme' => $data['medical_aid_scheme'] ?? 'NOT SET',
+                'medical_aid_number' => $data['medical_aid_number'] ?? 'NOT SET',
+                'id_number' => $data['id_number'] ?? 'NOT SET'
+            ]));
 
             // Data is already parsed by StructuredEmailParser
 
@@ -982,22 +1004,43 @@ class Timetics_Pdf_Addon
             $data['service_code'] = $service_info['code'] ?? 'Code 0190';
             $data['icd_code'] = $service_info['icd_code'] ?? 'Z00.0';
             
+            $this->log_info('MEDICAL_DEBUG: Service info medical data: ' . json_encode([
+                'medical_aid_scheme' => $service_info['medical_aid_scheme'] ?? 'NOT SET',
+                'medical_aid_number' => $service_info['medical_aid_number'] ?? 'NOT SET',
+                'id_number' => $service_info['id_number'] ?? 'NOT SET'
+            ]));
+            
             // Add customer medical information if available
             if (isset($service_info['medical_aid_scheme'])) {
                 $data['medical_aid_scheme'] = $service_info['medical_aid_scheme'];
+                $this->log_info('MEDICAL_DEBUG: Added medical_aid_scheme from service info: ' . $service_info['medical_aid_scheme']);
             }
             if (isset($service_info['medical_aid_number'])) {
                 $data['medical_aid_number'] = $service_info['medical_aid_number'];
+                $this->log_info('MEDICAL_DEBUG: Added medical_aid_number from service info: ' . $service_info['medical_aid_number']);
             }
             if (isset($service_info['id_number'])) {
                 $data['id_number'] = $service_info['id_number'];
+                $this->log_info('MEDICAL_DEBUG: Added id_number from service info: ' . $service_info['id_number']);
             }
             if (isset($service_info['residential_address'])) {
                 $data['residential_address'] = $service_info['residential_address'];
             }
 
             // SIMPLE medical info enhancement - like v2.4.4 but improved
+            $this->log_info('MEDICAL_DEBUG: Before enhancement - medical data: ' . json_encode([
+                'medical_aid_scheme' => $data['medical_aid_scheme'] ?? 'NOT SET',
+                'medical_aid_number' => $data['medical_aid_number'] ?? 'NOT SET',
+                'id_number' => $data['id_number'] ?? 'NOT SET'
+            ]));
+            
             $data = $this->enhance_with_booking_data($data, $message);
+            
+            $this->log_info('MEDICAL_DEBUG: After enhancement - medical data: ' . json_encode([
+                'medical_aid_scheme' => $data['medical_aid_scheme'] ?? 'NOT SET',
+                'medical_aid_number' => $data['medical_aid_number'] ?? 'NOT SET',
+                'id_number' => $data['id_number'] ?? 'NOT SET'
+            ]));
 
             // CACHE FINAL PARSED DATA
             $this->cache_production_debug_data('FINAL_PARSED_DATA', [
@@ -1011,9 +1054,17 @@ class Timetics_Pdf_Addon
                 ]
             ]);
 
+            $this->log_info('=== MEDICAL INFO EXTRACTION DEBUG END ===');
+            $this->log_info('FINAL RESULT - Medical data status: ' . json_encode([
+                'medical_aid_scheme' => !empty($data['medical_aid_scheme']) ? 'FOUND: ' . $data['medical_aid_scheme'] : 'NOT PROVIDED',
+                'medical_aid_number' => !empty($data['medical_aid_number']) ? 'FOUND: ' . $data['medical_aid_number'] : 'NOT PROVIDED',
+                'id_number' => !empty($data['id_number']) ? 'FOUND: ' . $data['id_number'] : 'NOT PROVIDED'
+            ]));
+            
             return $data;
         } catch (Exception $e) {
-            $this->log_error('Error parsing email data: ' . $e->getMessage());
+            $this->log_error('MEDICAL_DEBUG: Error parsing email data: ' . $e->getMessage());
+            $this->log_error('MEDICAL_DEBUG: Exception trace: ' . $e->getTraceAsString());
             return null;
         }
     }
@@ -2914,19 +2965,23 @@ Thank you for your business!'
      */
     private function get_data_from_timetics_objects($booking_id)
     {
+        $this->log_info('MEDICAL_DEBUG: get_data_from_timetics_objects called with booking_id: ' . $booking_id);
+        
         try {
             // Check if Timetics classes are available
             if (!class_exists('Timetics\Core\Bookings\Booking')) {
-                $this->log_info('Timetics\Core\Bookings\Booking class not available');
+                $this->log_info('MEDICAL_DEBUG: Timetics\Core\Bookings\Booking class not available');
                 return null;
             }
 
             // Try to get booking object
             $booking = new \Timetics\Core\Bookings\Booking($booking_id);
             if (!$booking || !$booking->get_id()) {
-                $this->log_info('Booking object not found for ID: ' . $booking_id);
+                $this->log_info('MEDICAL_DEBUG: Booking object not found for ID: ' . $booking_id);
                 return null;
             }
+            
+            $this->log_info('MEDICAL_DEBUG: Booking object found, ID: ' . $booking->get_id());
 
             // Get related objects
             $appointment = null;
@@ -2955,19 +3010,32 @@ Thank you for your business!'
 
             // Customer data
             if ($customer) {
+                $this->log_info('MEDICAL_DEBUG: Customer object found, ID: ' . $customer->get_id());
                 $data['customer_name'] = $customer->get_name() ?: 'Customer';
                 $data['customer_email'] = $customer->get_email() ?: 'customer@example.com';
                 $data['customer_phone'] = $customer->get_phone() ?: '';
                 
+                $this->log_info('MEDICAL_DEBUG: Customer data: ' . json_encode([
+                    'name' => $data['customer_name'],
+                    'email' => $data['customer_email'],
+                    'phone' => $data['customer_phone']
+                ]));
+                
                 // Try to get custom fields from customer meta
                 $customer_meta = get_user_meta($customer->get_id());
                 if ($customer_meta) {
+                    $this->log_info('MEDICAL_DEBUG: Customer meta found, keys: ' . implode(', ', array_keys($customer_meta)));
                     $custom_fields = $this->extract_custom_fields_from_meta($customer_meta);
                     $data['medical_aid_scheme'] = $custom_fields['medical_aid_scheme'];
                     $data['medical_aid_number'] = $custom_fields['medical_aid_number'];
                     $data['id_number'] = $custom_fields['id_number'];
+                    
+                    $this->log_info('MEDICAL_DEBUG: Customer custom fields extracted: ' . json_encode($custom_fields));
+                } else {
+                    $this->log_info('MEDICAL_DEBUG: No customer meta found for customer ID: ' . $customer->get_id());
                 }
             } else {
+                $this->log_info('MEDICAL_DEBUG: No customer object found');
                 $data['customer_name'] = 'Customer';
                 $data['customer_email'] = 'customer@example.com';
                 $data['customer_phone'] = '';
@@ -3079,7 +3147,12 @@ Thank you for your business!'
             $data['practice_number'] = 'PR1153307';
             $data['company_registration'] = '2024/748523/21';
 
-            $this->log_info('Successfully extracted data from Timetics objects', $data);
+            $this->log_info('MEDICAL_DEBUG: Successfully extracted data from Timetics objects');
+            $this->log_info('MEDICAL_DEBUG: Final medical data from Timetics objects: ' . json_encode([
+                'medical_aid_scheme' => $data['medical_aid_scheme'] ?? 'NOT SET',
+                'medical_aid_number' => $data['medical_aid_number'] ?? 'NOT SET',
+                'id_number' => $data['id_number'] ?? 'NOT SET'
+            ]));
             return $data;
 
         } catch (Exception $e) {
