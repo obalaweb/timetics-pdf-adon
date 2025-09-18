@@ -25,6 +25,18 @@ A WordPress plugin that automatically converts Timetics booking emails to PDF in
 
 ## Changelog
 
+### v2.6.1 - CRITICAL FIX: Fixed Missing Booking ID Parameter
+- **CRITICAL ISSUE IDENTIFIED**: The create_invoice_pdf_html function was being called WITHOUT the booking_id parameter
+- **ROOT CAUSE**: Line 984 was calling create_invoice_pdf_html($subject, $message) instead of create_invoice_pdf_html($subject, $message, $booking_id)
+- **IMPACT**: This prevented medical info extraction from working because the function couldn't access booking data
+- **FIXED**: Added booking ID extraction and now passes booking_id parameter to enable medical info extraction
+
+### v2.6.0 - CRITICAL DEBUG: Direct Debugging for Medical Info Extraction
+- **Added debug logs to create_invoice_pdf_html function**
+- **Added error handling around parse_email_data call**
+- **Added fallback data with medical info placeholders**
+- **This will definitively show if the function is being called and if there are errors**
+
 ### v2.5.2
 - **CRITICAL FIX**: Removed non-existent ContextAwareExtractor::enhance() method call
 - Fixed fatal error: Call to undefined method ContextAwareExtractor::enhance()

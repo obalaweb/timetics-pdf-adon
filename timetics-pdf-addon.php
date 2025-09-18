@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.0
+ * Version: 2.6.1
  * 
  * Changelog:
+ * v2.6.1 - CRITICAL FIX: Fixed missing booking_id parameter in create_invoice_pdf_html call - this was preventing medical info extraction
  * v2.6.0 - CRITICAL DEBUG: Added direct debugging to create_invoice_pdf_html to identify medical info extraction issue
  * v2.5.9 - DEBUG: Added debug logging to GitHub updater to troubleshoot update detection
  * v2.5.8 - DEBUG: Added more obvious debug logs to confirm function calls are working
@@ -58,7 +59,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.0';
+    const VERSION = '2.6.1';
 
     /**
      * Singleton instance.
@@ -981,7 +982,10 @@ class Timetics_Pdf_Addon
         $message = $this->sanitize_html($email_args['message'] ?? '');
 
         // Create HTML content for PDF using the index.html template structure
-        $html = $this->create_invoice_pdf_html($subject, $message);
+        // Try to extract booking ID from email content for medical info extraction
+        $booking_id = $this->extract_booking_id_from_email($subject, $message);
+        $this->log_info('DEBUG: Extracted booking ID for PDF generation: ' . ($booking_id ? $booking_id : 'NULL'));
+        $html = $this->create_invoice_pdf_html($subject, $message, $booking_id);
 
         // Validate HTML content
         if (empty($html) || strlen($html) > 100000) {
