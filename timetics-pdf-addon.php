@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.4
+ * Version: 2.6.5
  * 
  * Changelog:
+ * v2.6.5 - CRITICAL DEBUG: Added detailed database query debugging to identify why booking lookup returns NULL
  * v2.6.4 - CRITICAL FIX: Changed from email content extraction to database lookup for booking_id - email content doesn't contain booking ID
  * v2.6.3 - CRITICAL DEBUG: Added debug logging to extract_booking_id_from_email to identify why booking_id is NULL
  * v2.6.2 - CRITICAL DEBUG: Added error_log to create_invoice_pdf_html to confirm function is being called and identify why debug logs aren't appearing
@@ -62,7 +63,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.4';
+    const VERSION = '2.6.5';
 
     /**
      * Singleton instance.
@@ -2983,9 +2984,29 @@ Thank you for your business!'
             LIMIT 1
         ", $customer_email);
         
+        error_log('TIMETICS_DEBUG: Executing query: ' . $query);
+        
         $booking_id = $wpdb->get_var($query);
         
         error_log('TIMETICS_DEBUG: Database query result for email ' . $customer_email . ': ' . ($booking_id ? $booking_id : 'NULL'));
+        
+        // If no result, let's check what bookings exist for this email with different meta keys
+        if (!$booking_id) {
+            $debug_query = $wpdb->prepare("
+                SELECT p.ID, pm.meta_key, pm.meta_value
+                FROM {$wpdb->posts} p
+                INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+                WHERE p.post_type = 'timetics-booking'
+                AND p.post_status = 'publish'
+                AND (pm.meta_key LIKE '%email%' OR pm.meta_key LIKE '%customer%')
+                AND pm.meta_value LIKE %s
+                ORDER BY p.post_date DESC
+                LIMIT 5
+            ", '%' . $customer_email . '%');
+            
+            $debug_results = $wpdb->get_results($debug_query);
+            error_log('TIMETICS_DEBUG: Debug query results: ' . json_encode($debug_results));
+        }
         
         return $booking_id ? intval($booking_id) : null;
     }
