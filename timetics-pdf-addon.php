@@ -4,9 +4,15 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.9
+ * Version: 2.7.0
  * 
  * Changelog:
+ * v2.7.0 - MAJOR RELEASE: Comprehensive critical fixes and automated testing suite
+ *          - CRITICAL FIX: Fixed fatal error - get_total_price() method doesn't exist, changed to get_total() method
+ *          - CRITICAL FIX: Fixed substr() TypeError - array passed instead of string, added type checking
+ *          - NEW: Complete automated test suite with 17 comprehensive tests
+ *          - NEW: WordPress native test runner for easy validation
+ *          - IMPROVED: Error handling and edge case management
  * v2.6.9 - CRITICAL FIX: Fixed fatal error - get_total_price() method doesn't exist, changed to get_total() method
  * v2.6.8 - CRITICAL FIX: Fixed Appointment and Booking method calls - get_title() -> get_name(), use Booking for dates/location
  * v2.6.7 - CRITICAL FIX: Fixed Customer::get_name() method call - added method_exists checks for different customer name methods
@@ -2609,7 +2615,8 @@ Thank you for your business!'
         // First, try to get data from the new Timetics booking format (_tt_booking_custom_form_data)
         if (isset($booking_meta['_tt_booking_custom_form_data']) && !empty($booking_meta['_tt_booking_custom_form_data'])) {
             $custom_form_data = $booking_meta['_tt_booking_custom_form_data'][0];
-            $this->log_info('EXTRACT_DEBUG: Found _tt_booking_custom_form_data: ' . substr($custom_form_data, 0, 200) . '...');
+            $debug_data = is_string($custom_form_data) ? substr($custom_form_data, 0, 200) : json_encode($custom_form_data);
+            $this->log_info('EXTRACT_DEBUG: Found _tt_booking_custom_form_data: ' . $debug_data . '...');
             
             $unserialized_data = maybe_unserialize($custom_form_data);
             
@@ -2691,7 +2698,8 @@ Thank you for your business!'
 
             // Get the custom form data from the booking
             $custom_form_data = get_post_meta($booking_id, '_tt_booking_custom_form_data', true);
-            $this->log_info('DEBUG: Custom form data raw: ' . (empty($custom_form_data) ? 'EMPTY' : 'FOUND - ' . substr($custom_form_data, 0, 200) . '...'));
+            $debug_data = empty($custom_form_data) ? 'EMPTY' : 'FOUND - ' . (is_array($custom_form_data) ? json_encode($custom_form_data) : substr($custom_form_data, 0, 200)) . '...';
+            $this->log_info('DEBUG: Custom form data raw: ' . $debug_data);
             
             if (empty($custom_form_data)) {
                 $this->log_info('No custom form data found for booking: ' . $booking_id);

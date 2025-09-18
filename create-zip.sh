@@ -3,7 +3,7 @@
 # Script to create clean plugin zip file
 # Usage: ./create-zip.sh [version]
 
-VERSION=${1:-$(grep "Version:" timetics-pdf-addon.php | sed 's/.*Version: //')}
+VERSION=${1:-$(grep "^\s*\*\s*Version:" timetics-pdf-addon.php | head -1 | sed 's/.*Version: //')}
 ZIP_NAME="timetics-pdf-addon-v${VERSION}.zip"
 
 echo "Creating zip file: $ZIP_NAME"
