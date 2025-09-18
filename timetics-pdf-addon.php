@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.2
+ * Version: 2.6.3
  * 
  * Changelog:
+ * v2.6.3 - CRITICAL DEBUG: Added debug logging to extract_booking_id_from_email to identify why booking_id is NULL
  * v2.6.2 - CRITICAL DEBUG: Added error_log to create_invoice_pdf_html to confirm function is being called and identify why debug logs aren't appearing
  * v2.6.1 - CRITICAL FIX: Fixed missing booking_id parameter in create_invoice_pdf_html call - this was preventing medical info extraction
  * v2.6.0 - CRITICAL DEBUG: Added direct debugging to create_invoice_pdf_html to identify medical info extraction issue
@@ -60,7 +61,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.2';
+    const VERSION = '2.6.3';
 
     /**
      * Singleton instance.
@@ -2917,6 +2918,8 @@ Thank you for your business!'
     private function extract_booking_id_from_email($subject, $message)
     {
         $content = $subject . ' ' . $message;
+        error_log('TIMETICS_DEBUG: extract_booking_id_from_email called with subject: ' . substr($subject, 0, 50) . '...');
+        error_log('TIMETICS_DEBUG: extract_booking_id_from_email content length: ' . strlen($content));
         
         // Try multiple patterns to find booking ID (enhanced patterns)
         $patterns = [
@@ -2946,12 +2949,14 @@ Thank you for your business!'
             if (preg_match($pattern, $content, $matches)) {
                 $booking_id = intval($matches[1]);
                 if ($booking_id > 0 && $this->is_valid_booking_id($booking_id)) {
+                    error_log('TIMETICS_DEBUG: Extracted valid booking ID from email: ' . $booking_id);
                     $this->log_info('Extracted valid booking ID from email: ' . $booking_id);
                     return $booking_id;
                 }
             }
         }
         
+        error_log('TIMETICS_DEBUG: No booking ID found in email content');
         $this->log_info('No booking ID found in email content');
         return null;
     }
