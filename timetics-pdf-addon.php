@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.3
+ * Version: 2.6.4
  * 
  * Changelog:
+ * v2.6.4 - CRITICAL FIX: Changed from email content extraction to database lookup for booking_id - email content doesn't contain booking ID
  * v2.6.3 - CRITICAL DEBUG: Added debug logging to extract_booking_id_from_email to identify why booking_id is NULL
  * v2.6.2 - CRITICAL DEBUG: Added error_log to create_invoice_pdf_html to confirm function is being called and identify why debug logs aren't appearing
  * v2.6.1 - CRITICAL FIX: Fixed missing booking_id parameter in create_invoice_pdf_html call - this was preventing medical info extraction
@@ -61,7 +62,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.3';
+    const VERSION = '2.6.4';
 
     /**
      * Singleton instance.
@@ -984,9 +985,10 @@ class Timetics_Pdf_Addon
         $message = $this->sanitize_html($email_args['message'] ?? '');
 
         // Create HTML content for PDF using the index.html template structure
-        // Try to extract booking ID from email content for medical info extraction
-        $booking_id = $this->extract_booking_id_from_email($subject, $message);
-        $this->log_info('DEBUG: Extracted booking ID for PDF generation: ' . ($booking_id ? $booking_id : 'NULL'));
+        // Get booking ID from database using customer email for medical info extraction
+        $customer_email = $this->extract_customer_email_from_args($email_args);
+        $booking_id = $this->get_latest_booking_id_by_email($customer_email);
+        error_log('TIMETICS_DEBUG: Found booking ID for PDF generation: ' . ($booking_id ? $booking_id : 'NULL') . ' for email: ' . ($customer_email ? $customer_email : 'NULL'));
         $html = $this->create_invoice_pdf_html($subject, $message, $booking_id);
 
         // Validate HTML content
@@ -2910,6 +2912,82 @@ Thank you for your business!'
             }
         }
         return $default_value;
+    }
+
+    /**
+     * Extract customer email from email arguments.
+     */
+    private function extract_customer_email_from_args($email_args)
+    {
+        // Try to get email from various sources in the email arguments
+        $email = null;
+        
+        // Check if email is directly in the arguments
+        if (!empty($email_args['to'])) {
+            if (is_array($email_args['to'])) {
+                $email = $email_args['to'][0] ?? null;
+            } else {
+                $email = $email_args['to'];
+            }
+        }
+        
+        // Check if email is in headers
+        if (!$email && !empty($email_args['headers'])) {
+            if (is_array($email_args['headers'])) {
+                foreach ($email_args['headers'] as $header) {
+                    if (strpos($header, 'To:') === 0) {
+                        $email = trim(substr($header, 3));
+                        break;
+                    }
+                }
+            } else {
+                if (strpos($email_args['headers'], 'To:') === 0) {
+                    $email = trim(substr($email_args['headers'], 3));
+                }
+            }
+        }
+        
+        // Clean up email (remove any extra formatting)
+        if ($email) {
+            $email = trim($email);
+            // Remove angle brackets if present
+            $email = trim($email, '<>');
+        }
+        
+        error_log('TIMETICS_DEBUG: Extracted customer email: ' . ($email ? $email : 'NULL'));
+        return $email;
+    }
+
+    /**
+     * Get the latest booking ID for a customer email.
+     */
+    private function get_latest_booking_id_by_email($customer_email)
+    {
+        if (empty($customer_email)) {
+            error_log('TIMETICS_DEBUG: No customer email provided for booking lookup');
+            return null;
+        }
+        
+        global $wpdb;
+        
+        // Query for the most recent booking for this email
+        $query = $wpdb->prepare("
+            SELECT p.ID 
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+            WHERE p.post_type = 'timetics-booking'
+            AND p.post_status = 'publish'
+            AND pm.meta_key = '_tt_booking_customer_email'
+            AND pm.meta_value = %s
+            ORDER BY p.post_date DESC
+            LIMIT 1
+        ", $customer_email);
+        
+        $booking_id = $wpdb->get_var($query);
+        
+        error_log('TIMETICS_DEBUG: Database query result for email ' . $customer_email . ': ' . ($booking_id ? $booking_id : 'NULL'));
+        
+        return $booking_id ? intval($booking_id) : null;
     }
 
     /**
