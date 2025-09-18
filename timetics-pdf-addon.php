@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.7
+ * Version: 2.6.8
  * 
  * Changelog:
+ * v2.6.8 - CRITICAL FIX: Fixed Appointment and Booking method calls - get_title() -> get_name(), use Booking for dates/location
  * v2.6.7 - CRITICAL FIX: Fixed Customer::get_name() method call - added method_exists checks for different customer name methods
  * v2.6.6 - CRITICAL FIX: Fixed post_status from 'publish' to 'completed' - bookings have status 'completed' not 'publish'
  * v2.6.5 - CRITICAL DEBUG: Added detailed database query debugging to identify why booking lookup returns NULL
@@ -65,7 +66,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.7';
+    const VERSION = '2.6.8';
 
     /**
      * Singleton instance.
@@ -3349,18 +3350,23 @@ Thank you for your business!'
 
             // Appointment/Service data
             if ($appointment) {
-                $data['service_name'] = $appointment->get_title() ?: 'General Consultation';
+                $data['service_name'] = $appointment->get_name() ?: 'General Consultation';
                 $data['service_description'] = $appointment->get_description() ?: $data['service_name'];
-                $data['appointment_date'] = $appointment->get_start_date() ? date('Y-m-d', strtotime($appointment->get_start_date())) : date('Y-m-d');
-                $data['appointment_time'] = $appointment->get_start_date() ? date('H:i', strtotime($appointment->get_start_date())) : '10:00';
                 $data['duration'] = $appointment->get_duration() ? $appointment->get_duration() . ' min' : '30 min';
-                $data['location'] = $appointment->get_location() ?: 'Val De Vie Estate, Paarl';
             } else {
                 $data['service_name'] = 'General Consultation';
                 $data['service_description'] = 'General Consultation';
+                $data['duration'] = '30 min';
+            }
+            
+            // Booking data (dates, times, location)
+            if ($booking) {
+                $data['appointment_date'] = $booking->get_start_date() ? date('Y-m-d', strtotime($booking->get_start_date())) : date('Y-m-d');
+                $data['appointment_time'] = $booking->get_start_date() ? date('H:i', strtotime($booking->get_start_date())) : '10:00';
+                $data['location'] = $booking->get_location() ?: 'Val De Vie Estate, Paarl';
+            } else {
                 $data['appointment_date'] = date('Y-m-d');
                 $data['appointment_time'] = '10:00';
-                $data['duration'] = '30 min';
                 $data['location'] = 'Val De Vie Estate, Paarl';
             }
 
