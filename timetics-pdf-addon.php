@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.5
+ * Version: 2.5.6
  * 
  * Changelog:
+ * v2.5.6 - FEATURE: Added GitHub updater functionality for automatic plugin updates from WordPress admin
  * v2.5.5 - CRITICAL FIX: Removed call to non-existent init_github_updater() method that was causing fatal error
  * v2.5.4 - COMPREHENSIVE DEBUG: Added detailed logging throughout entire medical info extraction pipeline to identify root cause
  * v2.5.3 - DEBUG: Added comprehensive debugging for medical info extraction to identify why medical data is not being populated
@@ -53,7 +54,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.5';
+    const VERSION = '2.5.6';
 
     /**
      * Singleton instance.
@@ -78,6 +79,7 @@ class Timetics_Pdf_Addon
     {
         $this->load_dependencies();
         $this->init_hooks();
+        $this->init_github_updater();
     }
 
     /**
@@ -130,6 +132,154 @@ class Timetics_Pdf_Addon
 
         // Scheduled cleanup hook
         add_action('timetics_pdf_cleanup', [$this, 'cleanup_old_pdfs']);
+    }
+
+    /**
+     * Initialize GitHub updater for automatic plugin updates.
+     */
+    private function init_github_updater()
+    {
+        // Only run on admin pages
+        if (!is_admin()) {
+            return;
+        }
+
+        // Add update checker
+        add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_plugin_update']);
+        add_filter('plugins_api', [$this, 'plugin_api_call'], 10, 3);
+        add_filter('upgrader_post_install', [$this, 'post_install'], 10, 3);
+    }
+
+    /**
+     * Check for plugin updates from GitHub.
+     */
+    public function check_for_plugin_update($transient)
+    {
+        if (empty($transient->checked)) {
+            return $transient;
+        }
+
+        // Get latest release from GitHub
+        $latest_release = $this->get_latest_github_release();
+        
+        if (!$latest_release) {
+            return $transient;
+        }
+
+        $plugin_file = plugin_basename(__FILE__);
+        $current_version = self::VERSION;
+        $latest_version = $latest_release['tag_name'];
+
+        // Remove 'v' prefix if present
+        $latest_version = ltrim($latest_version, 'v');
+
+        // Check if update is available
+        if (version_compare($current_version, $latest_version, '<')) {
+            $transient->response[$plugin_file] = (object) [
+                'slug' => 'timetics-pdf-addon',
+                'plugin' => $plugin_file,
+                'new_version' => $latest_version,
+                'url' => 'https://github.com/obalaweb/timetics-pdf-adon',
+                'package' => $latest_release['zipball_url'],
+                'icons' => [],
+                'banners' => [],
+                'banners_rtl' => [],
+                'tested' => get_bloginfo('version'),
+                'requires_php' => '7.4',
+                'compatibility' => new stdClass(),
+            ];
+        }
+
+        return $transient;
+    }
+
+    /**
+     * Get latest release from GitHub API.
+     */
+    private function get_latest_github_release()
+    {
+        $cache_key = 'timetics_pdf_latest_release';
+        $cached = get_transient($cache_key);
+        
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        $response = wp_remote_get('https://api.github.com/repos/obalaweb/timetics-pdf-adon/releases/latest', [
+            'timeout' => 10,
+            'headers' => [
+                'Accept' => 'application/vnd.github.v3+json',
+                'User-Agent' => 'WordPress Plugin Updater'
+            ]
+        ]);
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (!$data || !isset($data['tag_name'])) {
+            return false;
+        }
+
+        // Cache for 1 hour
+        set_transient($cache_key, $data, HOUR_IN_SECONDS);
+        
+        return $data;
+    }
+
+    /**
+     * Handle plugin API calls for update information.
+     */
+    public function plugin_api_call($result, $action, $args)
+    {
+        if ($action !== 'plugin_information' || $args->slug !== 'timetics-pdf-addon') {
+            return $result;
+        }
+
+        $latest_release = $this->get_latest_github_release();
+        
+        if (!$latest_release) {
+            return $result;
+        }
+
+        return (object) [
+            'name' => 'Timetics PDF Addon',
+            'slug' => 'timetics-pdf-addon',
+            'version' => ltrim($latest_release['tag_name'], 'v'),
+            'author' => 'Obala Joseph Ivan',
+            'author_profile' => 'https://codprez.com/',
+            'requires' => '5.2',
+            'tested' => get_bloginfo('version'),
+            'requires_php' => '7.4',
+            'last_updated' => $latest_release['published_at'],
+            'homepage' => 'https://github.com/obalaweb/timetics-pdf-adon',
+            'sections' => [
+                'description' => 'Automatically convert Timetics booking emails to PDF and attach them to the same email.',
+                'changelog' => $latest_release['body'] ?? 'No changelog available.',
+            ],
+            'download_link' => $latest_release['zipball_url'],
+        ];
+    }
+
+    /**
+     * Handle post-install actions.
+     */
+    public function post_install($true, $hook_extra, $result)
+    {
+        global $wp_filesystem;
+
+        $plugin_folder = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'timetics-pdf-addon';
+        $wp_filesystem->move($result['destination'], $plugin_folder);
+        $result['destination'] = $plugin_folder;
+
+        if (is_plugin_active('timetics-pdf-addon/timetics-pdf-addon.php')) {
+            activate_plugin('timetics-pdf-addon/timetics-pdf-addon.php');
+        }
+
+        return $result;
     }
 
     /**
