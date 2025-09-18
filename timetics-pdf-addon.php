@@ -2022,8 +2022,6 @@ class Timetics_Pdf_Addon
                 <td class="header-right">
                     <div class="company-name">Dr Ben</div>
                     <div class="company-info">
-                        Company Registration No: 2024/748523/21<br>
-                        MP0953814 – PR1153307<br>
                         Office A2, 1st floor Polo Village Offices<br>
                         Val de Vie, Paarl, Western Cape<br>
                         7636, South Africa
@@ -2370,8 +2368,6 @@ Your email: jivanobala@gmail.com
 
 Practitioner Information:
 - Practitioner: Dr Ben Coetsee
-- Company Registration No: 2024/748523/21
-- Practitioner Number: MP0953814
 - Practice Number: PR1153307
 - ICD10 0190 Z00.0
 

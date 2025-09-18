@@ -139,7 +139,6 @@
 <body>
     <div class="header">
         <div class="company-info">
-            Company Registration No: 2024/748523/21<br>
             Registered Office: DR Ben Coetsee MP0953814 – PR1153307<br>
             Office A2, 1st floor Polo Village Offices, Val de Vie, Paarl, Western Cape, 7636, South Africa
         </div>

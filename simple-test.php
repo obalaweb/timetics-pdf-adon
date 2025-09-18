@@ -27,7 +27,6 @@ $html_message = '<p>Your appointment has been successfully scheduled.</p>
 <p>ID Number: 8001010001087</p>
 <p><strong>Practitioner Information:</strong></p>
 <p>- Practitioner: Dr Ben Coetsee</p>
-<p>- Company Registration No: 2024/748523/21</p>
 <p>- Practitioner Number: MP0953814</p>
 <p>- Practice Number: PR1153307</p>
 <p>- ICD10 0190 Z00.0</p>';

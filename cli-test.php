@@ -44,7 +44,6 @@ class CliPdfTest {
 <p><br></p>
 <p><strong>Practitioner Information:</strong></p>
 <p>- Practitioner: Dr Ben Coetsee</p>
-<p>- Company Registration No: 2024/748523/21</p>
 <p>- Practitioner Number: MP0953814</p>
 <p>- Practice Number: PR1153307</p>
 <p>- ICD10 0190 Z00.0</p>';
@@ -264,7 +263,6 @@ class CliPdfTest {
         
         <div class="company-info">
             <strong>Dr Ben</strong><br>
-            Company Registration No: 2024/748523/21<br>
             MP0953814 – PR1153307<br>
             Office A2, 1st floor Polo Village Offices<br>
             Val de Vie, Paarl, Western Cape, 7636, South Africa
@@ -316,7 +314,7 @@ class CliPdfTest {
         $test_emails = [
             'timetics_valid' => [
                 'subject' => 'Appointment Confirmation',
-                'message' => 'Your appointment has been successfully scheduled. Consultation details: Type: IV Drip. Practitioner: Dr Ben Coetsee. Company Registration No: 2024/748523/21',
+                'message' => 'Your appointment has been successfully scheduled. Consultation details: Type: IV Drip. Practitioner: Dr Ben Coetsee.',
                 'expected' => true
             ],
             'echocardiogram' => [
@@ -359,7 +357,6 @@ class CliPdfTest {
             'company registration no:',
             'val de vie',
             'practitioner: dr ben coetsee',
-            '2024/748523/21'
         ];
         
         $score = 0;
