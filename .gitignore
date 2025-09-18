@@ -1,0 +1,37 @@
+# WordPress
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+
+# Plugin specific
+*.zip
+*.log
+*.sql
+test-*.php
+temp-*
+debug-*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursorrules
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+vendor/
+composer.lock
+
+# Temporary files
+*.tmp
+*.temp
