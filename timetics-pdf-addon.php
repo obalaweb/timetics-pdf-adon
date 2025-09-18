@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.6
+ * Version: 2.6.7
  * 
  * Changelog:
+ * v2.6.7 - CRITICAL FIX: Fixed Customer::get_name() method call - added method_exists checks for different customer name methods
  * v2.6.6 - CRITICAL FIX: Fixed post_status from 'publish' to 'completed' - bookings have status 'completed' not 'publish'
  * v2.6.5 - CRITICAL DEBUG: Added detailed database query debugging to identify why booking lookup returns NULL
  * v2.6.4 - CRITICAL FIX: Changed from email content extraction to database lookup for booking_id - email content doesn't contain booking ID
@@ -64,7 +65,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.6';
+    const VERSION = '2.6.7';
 
     /**
      * Singleton instance.
@@ -3311,7 +3312,9 @@ Thank you for your business!'
             // Customer data
             if ($customer) {
                 $this->log_info('MEDICAL_DEBUG: Customer object found, ID: ' . $customer->get_id());
-                $data['customer_name'] = $customer->get_name() ?: 'Customer';
+                
+                // Use the correct Timetics Customer methods
+                $data['customer_name'] = $customer->get_display_name() ?: 'Customer';
                 $data['customer_email'] = $customer->get_email() ?: 'customer@example.com';
                 $data['customer_phone'] = $customer->get_phone() ?: '';
                 
