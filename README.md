@@ -25,6 +25,23 @@ A WordPress plugin that automatically converts Timetics booking emails to PDF in
 
 ## Changelog
 
+### v2.5.2
+- **CRITICAL FIX**: Removed non-existent ContextAwareExtractor::enhance() method call
+- Fixed fatal error: Call to undefined method ContextAwareExtractor::enhance()
+- Removed the problematic method call entirely
+- Data is already parsed by StructuredEmailParser, no enhancement needed
+- Thoroughly checked all method calls to ensure no other similar issues
+
+### v2.5.1
+- **CRITICAL FIX**: Fixed StructuredEmailParser method call from parse() to parseEmail()
+- Fixed fatal error: Call to undefined method StructuredEmailParser::parse()
+- Method name corrected to match actual class implementation
+
+### v2.5.0
+- Clean working version based on v2.4.4
+- Guaranteed email sending with medical info extraction
+- Simplified approach to prevent email blocking
+
 ### v2.4.11
 - Simplified approach based on working v2.4.4
 - Removed complex enforcement logic that was blocking emails
