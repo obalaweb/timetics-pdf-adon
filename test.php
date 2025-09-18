@@ -272,7 +272,7 @@ $data = [
                 </td>
 
                 <td class="header-right">
-                    <div class="company-name">Performance MD Inc</div>
+                    <div class="company-name">Dr Ben</div>
                     <div class="company-info">
                         Company Registration No: 2024/748523/21<br>
                         MP0953814 – PR1153307<br>

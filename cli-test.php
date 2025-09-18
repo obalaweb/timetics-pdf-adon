@@ -263,7 +263,7 @@ class CliPdfTest {
         ' . (!empty($data['id_number']) ? '<div class="medical-info"><strong>ID Number:</strong> ' . esc_html($data['id_number']) . '</div>' : '') . '
         
         <div class="company-info">
-            <strong>Performance MD Inc</strong><br>
+            <strong>Dr Ben</strong><br>
             Company Registration No: 2024/748523/21<br>
             MP0953814 – PR1153307<br>
             Office A2, 1st floor Polo Village Offices<br>

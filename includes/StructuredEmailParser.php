@@ -401,7 +401,7 @@ class StructuredEmailParser {
             'amount_due' => 0.00,
             
             // Use extracted company information or defaults
-            'company_name' => 'Performance MD Inc',
+            'company_name' => 'Dr Ben',
             'company_registration' => $extracted_data['company_registration'] ?? '2024/748523/21',
             'practitioner_number' => $extracted_data['practitioner_number'] ?? 'MP0953814',
             'practice_number' => $extracted_data['practice_number'] ?? 'PR1153307',

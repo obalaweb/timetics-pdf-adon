@@ -1341,7 +1341,7 @@ class Timetics_Pdf_Addon
             'invoice_number' => 'INV-' . date('md') . rand(100, 999),
             'invoice_date' => date('j M Y'),
             'due_date' => date('j M Y'),
-            'company_name' => 'Performance MD Inc',
+            'company_name' => 'Dr Ben',
             'practitioner_number' => 'MP0953814',
             'practice_number' => 'PR1153307',
             'company_registration' => '2024/748523/21',
@@ -2019,7 +2019,7 @@ class Timetics_Pdf_Addon
                 </td>
                 
                 <td class="header-right">
-                    <div class="company-name">Performance MD Inc</div>
+                    <div class="company-name">Dr Ben</div>
                     <div class="company-info">
                         Company Registration No: 2024/748523/21<br>
                         MP0953814 – PR1153307<br>

@@ -157,7 +157,7 @@
             <p><strong>Invoice Date:</strong> <?php echo esc_html($data['invoice_date'] ?? '8 Aug 2025'); ?></p>
             <p><strong>Invoice Number:</strong> <?php echo esc_html($data['invoice_number'] ?? 'INV-0255'); ?></p>
             <br>
-            <p><strong>Performance MD Inc</strong><br>
+            <p><strong>Dr Ben</strong><br>
             MP0953814 – PR1153307<br>
             A2 Office<br>
             1st Floor<br>
