@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.4
+ * Version: 2.5.5
  * 
  * Changelog:
+ * v2.5.5 - CRITICAL FIX: Removed call to non-existent init_github_updater() method that was causing fatal error
  * v2.5.4 - COMPREHENSIVE DEBUG: Added detailed logging throughout entire medical info extraction pipeline to identify root cause
  * v2.5.3 - DEBUG: Added comprehensive debugging for medical info extraction to identify why medical data is not being populated
  * v2.5.2 - CRITICAL FIX: Removed non-existent ContextAwareExtractor::enhance() method call
@@ -52,7 +53,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.4';
+    const VERSION = '2.5.5';
 
     /**
      * Singleton instance.
@@ -77,7 +78,6 @@ class Timetics_Pdf_Addon
     {
         $this->load_dependencies();
         $this->init_hooks();
-        $this->init_github_updater();
     }
 
     /**
