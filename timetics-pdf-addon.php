@@ -850,10 +850,9 @@ class Timetics_Pdf_Addon
             'consultation details:',
             'practitioner information:',
             'dr ben coetsee',
-            'performance md inc',
+            'dr ben',
             'practitioner number:',
             'practice number:',
-            'company registration no:',
             'icd-10:',
             'icd10',
             'val de vie',
@@ -874,7 +873,6 @@ class Timetics_Pdf_Addon
             'duration:',
             'location: val de vie',
             'practitioner: dr ben coetsee',
-            'company registration no: 2024/748523/21',
             'practitioner number: mp0953814',
             'practice number: pr1153307'
         ];
