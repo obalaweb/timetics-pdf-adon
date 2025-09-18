@@ -9,6 +9,7 @@ wp-content/wp-cache-config.php
 # Plugin specific
 *.zip
 *.log
+*.sql
 test-*.php
 temp-*
 debug-*
