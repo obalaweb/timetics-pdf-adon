@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.0
+ * Version: 2.5.1
  * 
  * Changelog:
+ * v2.5.1 - CRITICAL FIX: Fixed StructuredEmailParser method call from parse() to parseEmail()
  * v2.5.0 - Clean working version based on v2.4.4; guaranteed email sending with medical info extraction
  * v2.4.11 - Simplified approach based on working v2.4.4; removed complex enforcement; kept essential medical lookup
  * v2.4.10 - Added error handling to prevent email blocking; wrapped enforcement logic in try-catch
@@ -48,7 +49,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.0';
+    const VERSION = '2.5.1';
 
     /**
      * Singleton instance.
@@ -962,7 +963,7 @@ class Timetics_Pdf_Addon
             
             // Use the new structured email parser
             $parser = new StructuredEmailParser();
-            $data = $parser->parse($subject, $message);
+            $data = $parser->parseEmail($subject, $message);
 
             // Enhance data with context-aware extraction
             $enhancer = new ContextAwareExtractor();
