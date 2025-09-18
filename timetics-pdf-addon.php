@@ -3451,7 +3451,7 @@ Thank you for your business!'
 
             // Staff data
             if ($staff) {
-                $data['practitioner_name'] = $staff->get_name() ?: 'Dr Ben Coetsee';
+                $data['practitioner_name'] = $staff->get_full_name() ?: 'Dr Ben Coetsee';
                 $data['practitioner_email'] = $staff->get_email() ?: 'drben@capecodes.com';
                 $data['practitioner_phone'] = $staff->get_phone() ?: '+27 78 737 7686';
             } else {
