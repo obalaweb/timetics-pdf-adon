@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.7
+ * Version: 2.5.8
  * 
  * Changelog:
+ * v2.5.8 - DEBUG: Added more obvious debug logs to confirm function calls are working
  * v2.5.7 - DEBUG: Added error logging to get_email_signature to identify why medical info extraction isn't working
  * v2.5.6 - FEATURE: Added GitHub updater functionality for automatic plugin updates from WordPress admin
  * v2.5.5 - CRITICAL FIX: Removed call to non-existent init_github_updater() method that was causing fatal error
@@ -55,7 +56,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.7';
+    const VERSION = '2.5.8';
 
     /**
      * Singleton instance.
@@ -565,6 +566,7 @@ class Timetics_Pdf_Addon
         $subject = $args['subject'] ?? '';
         $message = $args['message'] ?? '';
 
+        $this->log_info('=== GET_EMAIL_SIGNATURE CALLED ===');
         $this->log_info('DEBUG: get_email_signature called with subject: ' . substr($subject, 0, 50) . '...');
 
         try {
@@ -616,6 +618,7 @@ class Timetics_Pdf_Addon
      */
     private function get_or_generate_pdf($args)
     {
+        $this->log_info('=== GET_OR_GENERATE_PDF CALLED ===');
         $signature = $this->get_email_signature($args);
         $transient_key = 'timetics_pdf_' . $signature;
 
