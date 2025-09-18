@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.2
+ * Version: 2.5.3
  * 
  * Changelog:
+ * v2.5.3 - DEBUG: Added comprehensive debugging for medical info extraction to identify why medical data is not being populated
  * v2.5.2 - CRITICAL FIX: Removed non-existent ContextAwareExtractor::enhance() method call
  * v2.5.1 - CRITICAL FIX: Fixed StructuredEmailParser method call from parse() to parseEmail()
  * v2.5.0 - Clean working version based on v2.4.4; guaranteed email sending with medical info extraction
@@ -50,7 +51,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.2';
+    const VERSION = '2.5.3';
 
     /**
      * Singleton instance.
@@ -75,6 +76,7 @@ class Timetics_Pdf_Addon
     {
         $this->load_dependencies();
         $this->init_hooks();
+        $this->init_github_updater();
     }
 
     /**
@@ -1124,7 +1126,10 @@ class Timetics_Pdf_Addon
     {
         try {
             $customer_email = $data['customer_email'] ?? '';
+            $this->log_info('ENHANCE_DEBUG: Starting enhancement for email: ' . $customer_email);
+            
             if (empty($customer_email) || $customer_email === 'customer@example.com') {
+                $this->log_info('ENHANCE_DEBUG: Skipping enhancement - invalid email');
                 return $data;
             }
             
@@ -1144,12 +1149,19 @@ class Timetics_Pdf_Addon
                 'order' => 'DESC'
             ]);
             
+            $this->log_info('ENHANCE_DEBUG: Found ' . count($recent_bookings) . ' recent bookings for email: ' . $customer_email);
+            
             if (!empty($recent_bookings)) {
                 $booking_id = $recent_bookings[0]->ID;
                 $booking_meta = get_post_meta($booking_id);
                 
+                $this->log_info('ENHANCE_DEBUG: Using booking ID: ' . $booking_id);
+                $this->log_info('ENHANCE_DEBUG: Booking meta keys: ' . implode(', ', array_keys($booking_meta)));
+                
                 // Try to get custom fields from the recent booking
                 $custom_fields = $this->extract_custom_fields_from_meta($booking_meta);
+                
+                $this->log_info('ENHANCE_DEBUG: Extracted custom fields: ' . json_encode($custom_fields));
                 
                 // Enhance data with custom fields if they're missing
                 if (empty($data['medical_aid_scheme']) && !empty($custom_fields['medical_aid_scheme'])) {
@@ -2343,16 +2355,24 @@ Thank you for your business!'
         // First, try to get data from the new Timetics booking format (_tt_booking_custom_form_data)
         if (isset($booking_meta['_tt_booking_custom_form_data']) && !empty($booking_meta['_tt_booking_custom_form_data'])) {
             $custom_form_data = $booking_meta['_tt_booking_custom_form_data'][0];
+            $this->log_info('EXTRACT_DEBUG: Found _tt_booking_custom_form_data: ' . substr($custom_form_data, 0, 200) . '...');
+            
             $unserialized_data = maybe_unserialize($custom_form_data);
             
             if (is_array($unserialized_data)) {
+                $this->log_info('EXTRACT_DEBUG: Unserialized data keys: ' . implode(', ', array_keys($unserialized_data)));
+                
                 $custom_fields['medical_aid_scheme'] = $unserialized_data['name_of_medical_aid_scheme'] ?? '';
                 $custom_fields['medical_aid_number'] = $unserialized_data['medical_aid_number'] ?? '';
                 $custom_fields['id_number'] = $unserialized_data['enter_your_id_number'] ?? '';
                 
                 $this->log_info('Extracted custom fields from _tt_booking_custom_form_data: ' . json_encode($custom_fields));
                 return $custom_fields;
+            } else {
+                $this->log_info('EXTRACT_DEBUG: Failed to unserialize _tt_booking_custom_form_data');
             }
+        } else {
+            $this->log_info('EXTRACT_DEBUG: No _tt_booking_custom_form_data found in booking meta');
         }
 
         // Fallback to old meta key patterns (for backward compatibility)
