@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.6.5
+ * Version: 2.6.6
  * 
  * Changelog:
+ * v2.6.6 - CRITICAL FIX: Fixed post_status from 'publish' to 'completed' - bookings have status 'completed' not 'publish'
  * v2.6.5 - CRITICAL DEBUG: Added detailed database query debugging to identify why booking lookup returns NULL
  * v2.6.4 - CRITICAL FIX: Changed from email content extraction to database lookup for booking_id - email content doesn't contain booking ID
  * v2.6.3 - CRITICAL DEBUG: Added debug logging to extract_booking_id_from_email to identify why booking_id is NULL
@@ -63,7 +64,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.6.5';
+    const VERSION = '2.6.6';
 
     /**
      * Singleton instance.
@@ -2977,7 +2978,7 @@ Thank you for your business!'
             FROM {$wpdb->posts} p
             INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
             WHERE p.post_type = 'timetics-booking'
-            AND p.post_status = 'publish'
+            AND p.post_status = 'completed'
             AND pm.meta_key = '_tt_booking_customer_email'
             AND pm.meta_value = %s
             ORDER BY p.post_date DESC
@@ -2997,7 +2998,7 @@ Thank you for your business!'
                 FROM {$wpdb->posts} p
                 INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
                 WHERE p.post_type = 'timetics-booking'
-                AND p.post_status = 'publish'
+                AND p.post_status = 'completed'
                 AND (pm.meta_key LIKE '%email%' OR pm.meta_key LIKE '%customer%')
                 AND pm.meta_value LIKE %s
                 ORDER BY p.post_date DESC
