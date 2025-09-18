@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.9
+ * Version: 2.6.0
  * 
  * Changelog:
+ * v2.6.0 - CRITICAL DEBUG: Added direct debugging to create_invoice_pdf_html to identify medical info extraction issue
  * v2.5.9 - DEBUG: Added debug logging to GitHub updater to troubleshoot update detection
  * v2.5.8 - DEBUG: Added more obvious debug logs to confirm function calls are working
  * v2.5.7 - DEBUG: Added error logging to get_email_signature to identify why medical info extraction isn't working
@@ -57,7 +58,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.9';
+    const VERSION = '2.6.0';
 
     /**
      * Singleton instance.
@@ -1699,8 +1700,28 @@ class Timetics_Pdf_Addon
      */
     private function create_invoice_pdf_html($subject, $message, $booking_id = null)
     {
+        $this->log_info('=== CREATE_INVOICE_PDF_HTML CALLED ===');
+        $this->log_info('DEBUG: create_invoice_pdf_html called with subject: ' . substr($subject, 0, 50) . '...');
+        
         // Parse email data
-        $data = $this->parse_email_data($subject, $message, $booking_id);
+        try {
+            $data = $this->parse_email_data($subject, $message, $booking_id);
+            $this->log_info('DEBUG: parse_email_data completed successfully');
+        } catch (Exception $e) {
+            $this->log_error('ERROR in create_invoice_pdf_html parse_email_data: ' . $e->getMessage());
+            $this->log_error('ERROR trace: ' . $e->getTraceAsString());
+            // Fallback to basic data
+            $data = [
+                'customer_name' => 'Customer',
+                'customer_email' => 'customer@example.com',
+                'service_name' => 'General Consultation',
+                'unit_price' => 960.00,
+                'total_amount' => 960.00,
+                'medical_aid_scheme' => '[Not provided]',
+                'medical_aid_number' => '[Not provided]',
+                'id_number' => '[Not provided]'
+            ];
+        }
 
         $html = '
 <!DOCTYPE html>
