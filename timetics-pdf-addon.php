@@ -4,9 +4,10 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.5.8
+ * Version: 2.5.9
  * 
  * Changelog:
+ * v2.5.9 - DEBUG: Added debug logging to GitHub updater to troubleshoot update detection
  * v2.5.8 - DEBUG: Added more obvious debug logs to confirm function calls are working
  * v2.5.7 - DEBUG: Added error logging to get_email_signature to identify why medical info extraction isn't working
  * v2.5.6 - FEATURE: Added GitHub updater functionality for automatic plugin updates from WordPress admin
@@ -56,7 +57,7 @@ class Timetics_Pdf_Addon
     /**
      * Plugin version.
      */
-    const VERSION = '2.5.8';
+    const VERSION = '2.5.9';
 
     /**
      * Singleton instance.
@@ -157,7 +158,10 @@ class Timetics_Pdf_Addon
      */
     public function check_for_plugin_update($transient)
     {
+        error_log("TIMETICS_DEBUG: check_for_plugin_update called");
+        
         if (empty($transient->checked)) {
+            error_log("TIMETICS_DEBUG: No checked plugins, returning transient");
             return $transient;
         }
 
@@ -175,8 +179,12 @@ class Timetics_Pdf_Addon
         // Remove 'v' prefix if present
         $latest_version = ltrim($latest_version, 'v');
 
+        // Debug logging for version comparison
+        error_log("TIMETICS_DEBUG: Current version: $current_version, Latest version: $latest_version");
+        
         // Check if update is available
         if (version_compare($current_version, $latest_version, '<')) {
+            error_log("TIMETICS_DEBUG: Update available! Adding to response.");
             $transient->response[$plugin_file] = (object) [
                 'slug' => 'timetics-pdf-addon',
                 'plugin' => $plugin_file,
