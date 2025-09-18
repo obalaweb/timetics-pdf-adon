@@ -2050,44 +2050,44 @@ class Timetics_Pdf_Addon
                     <strong>' . esc_html($data['service_name']) . '</strong>
                 </td>
                 <td>' . esc_html($data['service_description']) . '</td>
-                <td class="text-center">1.00</td>
-                <td class="text-right">' . number_format($data['unit_price'], 2) . '</td>
-                <td class="text-right">' . number_format($data['unit_price'], 2) . '</td>
+                <td>1.00</td>
+                <td>' . number_format($data['unit_price'], 2) . '</td>
+                <td>' . number_format($data['unit_price'], 2) . '</td>
             </tr>
             <tr class="totals-row">
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-right" style="border-bottom: 1px solid #333;">Subtotal</td>
-                <td class="text-right" style="border-bottom: 1px solid #333;">' . number_format($data['unit_price'], 2) . '</td>
+                <td style="border-bottom: 1px solid #333;">Subtotal</td>
+                <td style="border-bottom: 1px solid #333;">' . number_format($data['unit_price'], 2) . '</td>
             </tr>
             <tr class="totals-row">
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-right">TOTAL VAT</td>
-                <td class="text-right">0.00</td>
+                <td>TOTAL VAT</td>
+                <td>0.00</td>
             </tr>
             <tr class="totals-row">
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-right">TOTAL ZAR</td>
-                <td class="text-right">' . number_format($data['unit_price'], 2) . '</td>
+                <td>TOTAL ZAR</td>
+                <td>' . number_format($data['unit_price'], 2) . '</td>
             </tr>
             <tr class="totals-row">
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-right">Less Amount Paid</td>
-                <td class="text-right">' . number_format($data['unit_price'], 2) . '</td>
+                <td>Less Amount Paid</td>
+                <td>' . number_format($data['unit_price'], 2) . '</td>
             </tr>
             <tr class="amount-due-row">
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-right">AMOUNT DUE ZAR</td>
-                <td class="text-right">0.00</td>
+                <td>AMOUNT DUE ZAR</td>
+                <td>0.00</td>
             </tr>
         </tbody>
     </table>
