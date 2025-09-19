@@ -4,9 +4,14 @@
  * Plugin Name: Timetics PDF Addon
  * Plugin URI: https://arraytics.com/timetics/
  * Description: Automatically convert Timetics booking emails to PDF and attach them to the same email.
- * Version: 2.8.0
+ * Version: 2.8.1
  * 
  * Changelog:
+ * v2.8.1 - CRITICAL HOTFIX: Fixed customer email PDF attachment regression introduced in v2.8.0
+ *          - CRITICAL FIX: Customer emails now properly receive PDF attachments again
+ *          - IMPROVED: Made staff detection less aggressive to avoid false positives
+ *          - IMPROVED: Better fallback handling when staff email detected but customer extraction fails
+ *          - SECURITY: Restricted WordPress capability check to admin users only (not editors)
  * v2.8.0 - STAFF EMAIL PDF FIX: Dynamic staff detection and customer email extraction for staff notifications
  *          - CRITICAL FIX: Staff emails now properly receive PDF attachments
  *          - FEATURE: Dynamic staff detection using Timetics Staff API instead of hardcoded emails
@@ -2983,6 +2988,10 @@ Thank you for your business!'
             if ($customer_email) {
                 error_log('TIMETICS_DEBUG: Staff email detected. Recipient: ' . $recipient_email . ', Customer: ' . $customer_email);
                 return $customer_email;
+            } else {
+                // If we can't extract customer email from staff notification, log and continue with normal flow
+                error_log('TIMETICS_DEBUG: Staff email detected but could not extract customer email. Recipient: ' . $recipient_email);
+                // Don't return here - let it fall through to normal processing
             }
         }
         
@@ -3015,10 +3024,10 @@ Thank you for your business!'
             }
         }
         
-        // Fallback: Check if recipient is in WordPress users with staff capabilities
+        // Fallback: Check if recipient is in WordPress users with admin capabilities (be more restrictive)
         $user = get_user_by('email', $recipient_email);
-        if ($user && (user_can($user, 'manage_options') || user_can($user, 'edit_posts'))) {
-            error_log('TIMETICS_DEBUG: Confirmed staff email via WordPress capabilities: ' . $recipient_email);
+        if ($user && user_can($user, 'manage_options')) {
+            error_log('TIMETICS_DEBUG: Confirmed staff email via WordPress admin capabilities: ' . $recipient_email);
             return true;
         }
         
@@ -3101,9 +3110,9 @@ Thank you for your business!'
      */
     private function is_staff_email_address($email)
     {
-        // Quick check against WordPress users with staff capabilities
+        // Quick check against WordPress users with admin capabilities (be more restrictive)
         $user = get_user_by('email', $email);
-        return $user && (user_can($user, 'manage_options') || user_can($user, 'edit_posts'));
+        return $user && user_can($user, 'manage_options');
     }
 
     /**
