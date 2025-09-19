@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Invoice INV-0115-456</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            line-height: 1.4;
+            background-color: white;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            min-height: 80px;
+        }
+        
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .header-table td {
+            vertical-align: top;
+            padding: 0;
+        }
+        
+        .header-left {
+            width: 33.33%;
+            text-align: left;
+            padding-right: 15px;
+        }
+        
+        .header-center {
+            width: 33.33%;
+            text-align: left;
+            padding: 0 15px;
+        }
+        
+        .header-right {
+            width: 33.33%;
+            text-align: left;
+            padding-left: 15px;
+        }
+        
+        .invoice-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .customer-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .medical-info {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #555;
+        }
+        
+        .invoice-details {
+            font-size: 14px;
+        }
+        
+        .invoice-details p {
+            margin: 8px 0;
+            line-height: 1.3;
+        }
+        
+        .company-name {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .company-info {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            table-layout: fixed;
+        }
+        
+        .invoice-table th {
+            background-color: #f5f5f5;
+            padding: 12px 8px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: bold;
+            vertical-align: top;
+            /* Removed border */
+        }
+        
+        .invoice-table td {
+            padding: 12px 8px;
+            font-size: 13px;
+            vertical-align: top;
+            /* Removed border */
+        }
+        
+        .invoice-table th:first-child,
+        .invoice-table td:first-child {
+            width: 40%;
+        }
+        
+        .invoice-table th:nth-child(2),
+        .invoice-table td:nth-child(2) {
+            width: 25%;
+        }
+        
+        .invoice-table th:nth-child(3),
+        .invoice-table td:nth-child(3) {
+            width: 12%;
+        }
+        
+        .invoice-table th:nth-child(4),
+        .invoice-table td:nth-child(4) {
+            width: 12%;
+        }
+        
+        .invoice-table th:nth-child(5),
+        .invoice-table td:nth-child(5) {
+            width: 15%;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .totals-row td {
+            font-weight: normal;
+        }
+        
+        .totals-row td:nth-child(4) {
+            font-weight: bold;
+            text-align: right;
+        }
+        
+        .totals-row td:nth-child(5) {
+            font-weight: bold;
+            text-align: right;
+        }
+        
+        .amount-due-row td {
+            font-weight: bold;
+            background-color: #f0f8ff;
+        }
+        
+        .amount-due-row td:nth-child(4),
+        .amount-due-row td:nth-child(5) {
+            font-size: 14px;
+        }
+        
+        .due-date-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .due-date-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: left;
+            color: #333;
+        }
+        
+        .due-date-section p {
+            margin: 10px 0;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .footer-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .footer-section p {
+            margin: 5px 0;
+        }
+        
+        /* Ensure single page layout */
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 15px;
+                font-size: 12px;
+                padding-bottom: 80px; /* Add space for footer */
+            }
+            
+            .header {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            
+            .invoice-table {
+                margin: 20px 0;
+            }
+            
+            .due-date-section {
+                margin-top: 20px;
+                padding: 15px;
+            }
+            
+            .footer-section {
+                position: fixed;
+                bottom: 10mm;
+                left: 15mm;
+                right: 15mm;
+                margin: 0;
+                padding: 10px;
+                background-color: #f9f9f9;
+                border-top: 1px solid #ddd;
+                font-size: 10px;
+            }
+            
+            /* Prevent page breaks in critical sections */
+            .header,
+            .totals-row,
+            .amount-due-row {
+                page-break-inside: avoid;
+            }
+            
+            .invoice-table {
+                page-break-inside: auto;
+            }
+            
+            .invoice-table tr {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td class="header-left">
+                    <div class="invoice-title">TAX INVOICE</div>
+                    <div class="customer-section">
+                        <div class="customer-name">John Doe</div>
+                        <div class="medical-info"><strong>Medical Aid Scheme:</strong> [Not provided]</div>
+                        <div class="medical-info"><strong>Medical Aid Number:</strong> [Not provided]</div>
+                        <div class="medical-info"><strong>ID Number:</strong> [Not provided]</div>
+                    </div>
+                </td>
+                
+                <td class="header-center">
+                    <div class="invoice-details">
+                        <p><strong>Invoice Date:</strong><br>15 Jan 2025</p>
+                        <p><strong>Invoice Number:</strong><br>INV-0115-456</p>
+                    </div>
+                </td>
+                
+                <td class="header-right">
+                    <div class="company-name">Performance MD Inc</div>
+                    <div class="company-info">
+                        Company Registration No: 2024/748523/21<br>
+                        MP0953814 – PR1153307<br>
+                        Office A2, 1st floor Polo Village Offices<br>
+                        Val de Vie, Paarl, Western Cape<br>
+                        7636, South Africa
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <table class="invoice-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Item Description</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Amount ZAR</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Code 0190<br>
+                    Z00.0
+                </td>
+                <td>General Consultation (Blood Results)</td>
+                <td class="text-center">1.00</td>
+                <td class="text-right">960.00</td>
+                <td class="text-right">960.00</td>
+            </tr>
+            <tr class="totals-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right" style="border-bottom: 1px solid #333;">Subtotal</td>
+                <td class="text-right" style="border-bottom: 1px solid #333;">960.00</td>
+            </tr>
+            <tr class="totals-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">TOTAL VAT</td>
+                <td class="text-right">0.00</td>
+            </tr>
+            <tr class="totals-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">TOTAL ZAR</td>
+                <td class="text-right">960.00</td>
+            </tr>
+            <tr class="totals-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">Less Amount Paid</td>
+                <td class="text-right">960.00</td>
+            </tr>
+            <tr class="amount-due-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-right">AMOUNT DUE ZAR</td>
+                <td class="text-right">0.00</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="due-date-section">
+        <p class="due-date-title">Due Date: 15 Jan 2025</p>
+        <p>This is a cash practice. The patient agrees to submit any medical aid claims independently.</p>
+        <p>The patient indemnifies and hold harmless Dr Ben Coetsee and his staff from any claims, liability, or damages arising from this consultation or treatment.</p>
+        <p>The patient confirms to have read, understood, and agree to the above terms.</p>
+    </div>
+    
+    <div class="footer-section">
+        <p><strong>Cancellation Policy:</strong> Kindly provide at least 24 hours' notice. Cancellations made less than 24 hours before the appointment will be charged at the full consultation fee. We appreciate your understanding and cooperation.</p>
+    </div>
+</body>
+</html>
